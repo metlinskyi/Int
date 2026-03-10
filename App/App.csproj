@@ -16,4 +16,10 @@
     <InternalsVisibleTo Include="Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Maps\battlefield.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
