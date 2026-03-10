@@ -13,12 +13,17 @@ public class Robot : GridItem
 
     public void Attack(Robot target)
     {
-        if (target.Health <= 0)
+        target.ApplyDamage(1);
+        Console.WriteLine($"{Name} attacks {target.Name} for 1 damage. {target.Name} HP: {Math.Max(0, target.Health)}");
+    }
+
+    public void ApplyDamage(int amount)
+    {
+        if (amount <= 0 || Health <= 0)
         {
             return;
         }
 
-        target.Health -= 1;
-        Console.WriteLine($"{Name} attacks {target.Name} for 1 damage. {target.Name} HP: {Math.Max(0, target.Health)}");
+        Health -= amount;
     }
 }

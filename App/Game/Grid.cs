@@ -16,7 +16,7 @@ public class Cell
 
 public class Grid
 {
-    public const int BattlefieldSize = 50;
+    public const int BattlefieldSize = 10;
     public int Width { get; }
     public int Height { get; }
     public Cell[,] Cells { get; }
@@ -111,6 +111,74 @@ public class Grid
         }
 
         Cells[x, y].IsOccupied = false;
+    }
+
+    public bool TryMoveRobot(Robot robot, int targetX, int targetY)
+    {
+        if (!IsInBounds(targetX, targetY))
+        {
+            return false;
+        }
+
+        int distance = Math.Abs(targetX - robot.X) + Math.Abs(targetY - robot.Y);
+        if (distance != 1)
+        {
+            return false;
+        }
+
+        if (!IsCellAvailable(targetX, targetY))
+        {
+            return false;
+        }
+
+        Cells[robot.X, robot.Y].IsOccupied = false;
+        robot.X = targetX;
+        robot.Y = targetY;
+        Cells[targetX, targetY].IsOccupied = true;
+        return true;
+    }
+
+    public bool IsWallAt(int x, int y)
+    {
+        return IsInBounds(x, y) && Cells[x, y].IsWall;
+    }
+
+    public bool HasClearLineOfSight(int fromX, int fromY, int toX, int toY)
+    {
+        if (!IsInBounds(fromX, fromY) || !IsInBounds(toX, toY))
+        {
+            return false;
+        }
+
+        if (fromX == toX)
+        {
+            int step = fromY < toY ? 1 : -1;
+            for (int y = fromY + step; y != toY; y += step)
+            {
+                if (IsWallAt(fromX, y))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (fromY == toY)
+        {
+            int step = fromX < toX ? 1 : -1;
+            for (int x = fromX + step; x != toX; x += step)
+            {
+                if (IsWallAt(x, fromY))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public void Render(IReadOnlyCollection<Robot> robots)
