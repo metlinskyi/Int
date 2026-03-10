@@ -143,6 +143,16 @@ public class Grid
         return IsInBounds(x, y) && Cells[x, y].IsWall;
     }
 
+    public bool IsOccupiedAt(int x, int y)
+    {
+        return IsInBounds(x, y) && Cells[x, y].IsOccupied;
+    }
+
+    public bool IsInside(int x, int y)
+    {
+        return IsInBounds(x, y);
+    }
+
     public bool HasClearLineOfSight(int fromX, int fromY, int toX, int toY)
     {
         if (!IsInBounds(fromX, fromY) || !IsInBounds(toX, toY))
@@ -179,6 +189,83 @@ public class Grid
         }
 
         return false;
+    }
+
+    public List<(int x, int y)> FindPath(int startX, int startY, int goalX, int goalY)
+    {
+        if (!IsInBounds(startX, startY) || !IsInBounds(goalX, goalY))
+        {
+            return new List<(int x, int y)>();
+        }
+
+        bool[,] visited = new bool[Width, Height];
+        (int x, int y)?[,] previous = new (int x, int y)?[Width, Height];
+        var queue = new Queue<(int x, int y)>();
+
+        visited[startX, startY] = true;
+        queue.Enqueue((startX, startY));
+
+        int[] dx = [1, -1, 0, 0];
+        int[] dy = [0, 0, 1, -1];
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            if (current.x == goalX && current.y == goalY)
+            {
+                return BuildPath(previous, startX, startY, goalX, goalY);
+            }
+
+            for (int i = 0; i < dx.Length; i++)
+            {
+                int nextX = current.x + dx[i];
+                int nextY = current.y + dy[i];
+
+                if (!IsInBounds(nextX, nextY) || visited[nextX, nextY])
+                {
+                    continue;
+                }
+
+                bool isGoal = nextX == goalX && nextY == goalY;
+                bool isBlocked = Cells[nextX, nextY].IsWall || (Cells[nextX, nextY].IsOccupied && !isGoal);
+                if (isBlocked)
+                {
+                    continue;
+                }
+
+                visited[nextX, nextY] = true;
+                previous[nextX, nextY] = current;
+                queue.Enqueue((nextX, nextY));
+            }
+        }
+
+        return new List<(int x, int y)>();
+    }
+
+    private static List<(int x, int y)> BuildPath((int x, int y)?[,] previous, int startX, int startY, int goalX, int goalY)
+    {
+        var path = new List<(int x, int y)>();
+        var current = (x: goalX, y: goalY);
+
+        while (true)
+        {
+            path.Add(current);
+            if (current.x == startX && current.y == startY)
+            {
+                break;
+            }
+
+            var parent = previous[current.x, current.y];
+            if (!parent.HasValue)
+            {
+                return new List<(int x, int y)>();
+            }
+
+            current = parent.Value;
+        }
+
+        path.Reverse();
+        return path;
     }
 
     public void Render(IReadOnlyCollection<Robot> robots)

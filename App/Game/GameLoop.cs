@@ -139,35 +139,56 @@ public class GameLoop
 
     private bool TryMoveOneCellToward(Robot mover, Robot target)
     {
-        var candidates = new List<(int x, int y)>();
+        var approachCells = new List<(int x, int y)>
+        {
+            (target.X + 1, target.Y),
+            (target.X - 1, target.Y),
+            (target.X, target.Y + 1),
+            (target.X, target.Y - 1)
+        };
 
-        if (target.X > mover.X)
+        List<(int x, int y)>? bestPath = null;
+        foreach (var cell in approachCells)
         {
-            candidates.Add((mover.X + 1, mover.Y));
-        }
-        else if (target.X < mover.X)
-        {
-            candidates.Add((mover.X - 1, mover.Y));
-        }
-
-        if (target.Y > mover.Y)
-        {
-            candidates.Add((mover.X, mover.Y + 1));
-        }
-        else if (target.Y < mover.Y)
-        {
-            candidates.Add((mover.X, mover.Y - 1));
-        }
-
-        foreach (var candidate in candidates)
-        {
-            if (_grid.TryMoveRobot(mover, candidate.x, candidate.y))
+            if (!_grid.IsInside(cell.x, cell.y))
             {
-                Console.WriteLine($"{mover.Name} moves to ({mover.X},{mover.Y}).");
-                return true;
+                continue;
+            }
+
+            if (_grid.IsWallAt(cell.x, cell.y))
+            {
+                continue;
+            }
+
+            if (_grid.IsOccupiedAt(cell.x, cell.y))
+            {
+                continue;
+            }
+
+            var path = _grid.FindPath(mover.X, mover.Y, cell.x, cell.y);
+            if (path.Count == 0)
+            {
+                continue;
+            }
+
+            if (bestPath == null || path.Count < bestPath.Count)
+            {
+                bestPath = path;
             }
         }
 
-        return false;
+        if (bestPath == null || bestPath.Count < 2)
+        {
+            return false;
+        }
+
+        var nextStep = bestPath[1];
+        if (!_grid.TryMoveRobot(mover, nextStep.x, nextStep.y))
+        {
+            return false;
+        }
+
+        Console.WriteLine($"{mover.Name} moves to ({mover.X},{mover.Y}).");
+        return true;
     }
 }
