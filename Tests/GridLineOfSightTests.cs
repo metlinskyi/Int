@@ -22,4 +22,14 @@ public class GridLineOfSightTests
 
         Assert.That(canShoot, Is.True);
     }
+
+    [Test]
+    public void HasClearLineOfSight_ReturnsFalse_ForDiagonalTarget()
+    {
+        var grid = new Grid();
+
+        bool canShoot = grid.HasClearLineOfSight(0, 0, 2, 2);
+
+        Assert.That(canShoot, Is.False);
+    }
 }
