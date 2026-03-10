@@ -19,5 +19,7 @@
   <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\App\App.csproj" />
+  </ItemGroup>
 </Project>
