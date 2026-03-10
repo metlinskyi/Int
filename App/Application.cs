@@ -14,6 +14,7 @@ internal class Application
         _logger.LogInformation("Starting application...");
 
         string mapPath = Path.Combine(AppContext.BaseDirectory, "Maps", "battlefield.txt");
+        MapGenerator.GenerateRandomMap(mapPath, Grid.BattlefieldSize, Grid.BattlefieldSize, 0.30);
         var gameLoop = new GameLoop(mapPath);
 
 
