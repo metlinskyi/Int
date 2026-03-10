@@ -1,7 +1,8 @@
-internal class HelloWorldService : IHelloWorldService
+internal class GameService : IGameService
 {
-    public string GetMessage()
+    public Task RunAsync()
     {
-        return "Hello, World!";
+        var engine = GameEngine.CreateRandom(new Random());
+        return WindowsGameHost.RunAsync(engine);
     }
 }

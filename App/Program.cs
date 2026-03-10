@@ -2,7 +2,7 @@
 
 await new ServiceCollection()
     .AddLogging()
-    .AddScoped<IHelloWorldService, HelloWorldService>()
+    .AddScoped<IGameService, GameService>()
     .AddScoped<Application>()
     .BuildServiceProvider()
     .CreateApplicationScope();

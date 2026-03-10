@@ -1,4 +1,4 @@
-public interface IHelloWorldService
+public interface IGameService
 {
-    string GetMessage();
+    Task RunAsync();
 }

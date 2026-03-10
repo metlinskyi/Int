@@ -6,7 +6,9 @@ Gameplay:
     filled 30% of the Wall randomly, 
     allocated two robots as far as posible from each other, 
     each robot can do only one action per turn,
-    select with robot start a game the first is randomly.
+    select with robot start a game the first is randomly,
+    each robot try to find and defeat each other use a simple artificial intelligence,
+    use pathfinding algorithm for finding the enemy robot.
    
 
 

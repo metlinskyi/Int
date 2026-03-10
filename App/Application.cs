@@ -2,18 +2,18 @@ using Microsoft.Extensions.Logging;
 
 internal class Application
 {
-    private readonly IHelloWorldService _helloWorldService;
+    private readonly IGameService _gameService;
     private readonly ILogger<Application> _logger;
 
-    public Application(IHelloWorldService helloWorldService, ILogger<Application> logger)
+    public Application(IGameService gameService, ILogger<Application> logger)
     {
-        _helloWorldService = helloWorldService;
+        _gameService = gameService;
         _logger = logger;
     }
 
     public async Task Run()
     {
-        var message = _helloWorldService.GetMessage();
-        Console.WriteLine(message);
+        _logger.LogInformation("Starting robot battle game");
+        await _gameService.RunAsync();
     }
 }
